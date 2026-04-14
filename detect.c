@@ -342,14 +342,23 @@ int getfamily(unsigned int id) {
 	return 0;
 }
 
-int getfamily_gfx(unsigned int gfx_ver) {
+/*
+ * Map GC IP version to chip family. The version is encoded as
+ * major * 100 + minor * 10 + rev, matching the kernel's
+ * IP_VERSION(major, minor, rev).
+ *
+ * Note: for GC 10.x the IP revision matches the GFX shader target
+ * (e.g. IP 10.3.0 = gfx1030). For GC 11.0.x they diverge:
+ * IP 11.0.1 = Phoenix (gfx1103), IP 11.0.3 = Navi 32 (gfx1101).
+ */
+int getfamily_gfx(unsigned int ip_ver) {
 
-	switch(gfx_ver) {
-		// RDNA 1 (GFX10.1)
+	switch(ip_ver) {
+		// RDNA 1 (GC 10.1.x)
 		case 1010: return NAVI10;
 		case 1011: return NAVI12;
 		case 1012: return NAVI14;
-		// RDNA 2 (GFX10.3)
+		// RDNA 2 (GC 10.3.x)
 		case 1030: return SIENNA_CICHLID;
 		case 1031: return NAVY_FLOUNDER;
 		case 1032: return DIMGREY_CAVEFISH;
@@ -357,28 +366,30 @@ int getfamily_gfx(unsigned int gfx_ver) {
 		case 1034: return GFX1034;
 		case 1035: return YELLOW_CARP;
 		case 1036: return MENDOCINO;
-		// RDNA 3 (GFX11.0)
-		case 1100: return NAVI31;
-		case 1101: return NAVI32;
-		case 1102: return NAVI33;
-		case 1103: return GFX1103;
-		// RDNA 3.5 (GFX11.5)
+		case 1037: return MENDOCINO;
+		// RDNA 3 (GC 11.0.x) - IP rev != GFX code
+		case 1100: return NAVI31;	// IP 11.0.0 = gfx1100
+		case 1101: return GFX1103;	// IP 11.0.1 = gfx1103 (Phoenix1)
+		case 1102: return NAVI33;	// IP 11.0.2 = gfx1102
+		case 1103: return NAVI32;	// IP 11.0.3 = gfx1101 (Navi 32)
+		case 1104: return GFX1103;	// IP 11.0.4 = gfx1103 (Phoenix2)
+		// RDNA 3.5 (GC 11.5.x)
 		case 1150: return GFX1150;
 		case 1151: return GFX1151;
-		// RDNA 4m (GFX11.7)
+		// RDNA 4m (GC 11.7.x)
 		case 1170: return GFX1170;
 		case 1171: return GFX1171;
 		case 1172: return GFX1172;
-		// RDNA 4 (GFX12.0)
+		// RDNA 4 (GC 12.0.x)
 		case 1200: return GFX1200;
 		case 1201: return GFX1201;
-		// RDNA 5 (GFX13)
+		// RDNA 5 (GC 13.x)
 		case 1300: return GFX1300;
 		case 1310: return GFX1310;
 	}
 
 	// Fallback: recognize family by major.minor
-	unsigned int major_minor = (gfx_ver / 10) * 10;
+	unsigned int major_minor = (ip_ver / 10) * 10;
 	switch(major_minor) {
 		case 1010: return NAVI10;
 		case 1030: return SIENNA_CICHLID;
@@ -386,6 +397,7 @@ int getfamily_gfx(unsigned int gfx_ver) {
 		case 1150: return GFX1150;
 		case 1170: return GFX1170;
 		case 1200: return GFX1200;
+		case 1210: return GFX1200;
 		case 1300: return GFX1300;
 		case 1310: return GFX1310;
 	}
