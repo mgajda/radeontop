@@ -278,16 +278,24 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			if (bits.vram) {
 				if (color) attron(COLOR_PAIR(2));
 				percentage(start, w, vram);
-				printright(start++, hw, _("%.0fM / %.0fM VRAM %6.2f%%"),
-						vrammb, vramsizemb, vram);
+				if (is_apu)
+					printright(start++, hw, _("%.0fM / %.0fM Reserved Memory %6.2f%%"),
+							vrammb, vramsizemb, vram);
+				else
+					printright(start++, hw, _("%.0fM / %.0fM VRAM %6.2f%%"),
+							vrammb, vramsizemb, vram);
 				if (color) attroff(COLOR_PAIR(2));
 			}
 
 			if (bits.gtt) {
 				if (color) attron(COLOR_PAIR(2));
 				percentage(start, w, gtt);
-				printright(start++, hw, _("%.0fM / %.0fM GTT %6.2f%%"),
-						gttmb, gttsizemb, gtt);
+				if (is_apu)
+					printright(start++, hw, _("%.0fM / %.0fM Unified Memory %6.2f%%"),
+							gttmb, gttsizemb, gtt);
+				else
+					printright(start++, hw, _("%.0fM / %.0fM GTT %6.2f%%"),
+							gttmb, gttsizemb, gtt);
 				if (color) attroff(COLOR_PAIR(2));
 			}
 		}

@@ -95,6 +95,7 @@ void init_amdgpu(int fd) {
 		amdgpu_query_gpu_info(amdgpu_dev, &gpu);
 		sclk_max = gpu.max_engine_clk;
 		mclk_max = gpu.max_memory_clk;
+		is_apu = (gpu.ids_flags & AMDGPU_IDS_FLAGS_FUSION) ? 1 : 0;
 
 		if (!(ret = getsclk_amdgpu(&out32)))
 			getsclk = getsclk_amdgpu;

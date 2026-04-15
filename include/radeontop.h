@@ -176,6 +176,7 @@ extern uint64_t vramsize;
 extern uint64_t gttsize;
 extern unsigned int sclk_max;
 extern unsigned int mclk_max;
+extern unsigned int is_apu;
 
 // radeon.c
 void init_radeon(int fd, int drm_major, int drm_minor);
