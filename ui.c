@@ -153,6 +153,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		float cb = 100 * results->cb * k;
 		float uvd = 100 * results->uvd * k;
 		float vce0 = 100 * results->vce0 * k;
+		float vcn = 100 * results->vcn * k;
 		float vram = 100.0f * results->vram / vramsize;
 		float vrammb = results->vram / 1024.0f / 1024.0f;
 		float vramsizemb = vramsize / 1024.0f / 1024.0f;
@@ -260,6 +261,10 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		if (bits.vce0) {
 			percentage(start, w, vce0);
 			printright(start++, hw, _("VCE %6.2f%%"), vce0);
+		}
+		if (bits.vcn) {
+			percentage(start, w, vcn);
+			printright(start++, hw, _("VCN %6.2f%%"), vcn);
 		}
 
 		if (bits.vram || bits.gtt) {
