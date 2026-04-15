@@ -38,6 +38,8 @@ int (*getvram)(uint64_t *out);
 int (*getgtt)(uint64_t *out);
 int (*getsclk)(uint32_t *out);
 int (*getmclk)(uint32_t *out);
+int (*gettemp)(uint32_t *out);
+int (*getpower)(uint32_t *out);
 
 static int find_pci(short bus, struct pci_device *pci_dev) {
 	int ret = pci_system_init();
@@ -265,7 +267,7 @@ static int getuint64_null(uint64_t *out) { UNUSED(out); return -1; }
 void init_pci(const char *path, short *bus, unsigned int *device_id, const unsigned char forcemem) {
 	short device_bus = -1;
 	int err = 1;
-	getgrbm = getsclk = getmclk = getuint32_null;
+	getgrbm = getsclk = getmclk = gettemp = getpower = getuint32_null;
 	getsrbm = getsrbm2 = getuint32_null;
 	getvram = getgtt = getuint64_null;
 

@@ -62,6 +62,8 @@ extern int (*getvram)(uint64_t *out);
 extern int (*getgtt)(uint64_t *out);
 extern int (*getsclk)(uint32_t *out);
 extern int (*getmclk)(uint32_t *out);
+extern int (*gettemp)(uint32_t *out);
+extern int (*getpower)(uint32_t *out);
 
 // ticks.c
 void collect(unsigned int ticks, unsigned int dumpinterval);
@@ -165,6 +167,8 @@ struct bits_t {
 	uint64_t gtt;
 	unsigned int sclk;
 	unsigned int mclk;
+	uint32_t temperature;
+	uint32_t power;
 };
 
 extern struct bits_t bits;
