@@ -161,7 +161,7 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 
 		if (temp_avg > 0)
 			fprintf(f, ", temp %.1fC", temp_avg);
-		if (power_avg > 0)
+		if (has_power_sensor)
 			fprintf(f, ", power %.1fW", power_avg);
 
 		fprintf(f, "\n");
