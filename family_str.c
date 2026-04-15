@@ -94,7 +94,7 @@ const char * const family_str[] = {
 	"Radeon 890M (Strix Point)",
 	"Radeon 8060S (Strix Halo)",
 	// RDNA 4 APUs (gfx115x - Kraken)
-	"Radeon 820M/840M/860M (Kraken Point)",
+	"Radeon 820M/840M/860M (Krackan Point)",
 	// RDNA 4 APUs (gfx117x, Medusa variants - mapping TBD)
 	"Radeon 880M (gfx1170)",
 	"Medusa (gfx1171)",
