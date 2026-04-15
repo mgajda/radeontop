@@ -142,10 +142,22 @@ int main(int argc, char **argv) {
 	int family = getfamily(device_id);
 	if (!family && gfx_version)
 		family = getfamily_gfx(gfx_version);
-	if (!family)
-		fprintf(stderr, _("Unknown Radeon card. <= R500 won't work, new cards might.\n"));
 
-	const char * const cardname = family_str[family];
+	const char *cardname;
+	static char gfx_fallback[32];
+
+	if (!family) {
+		if (gfx_version) {
+			// Generate fallback name for unknown card with GFX code
+			snprintf(gfx_fallback, sizeof(gfx_fallback), "GFX%u (unknown)", gfx_version);
+			cardname = gfx_fallback;
+		} else {
+			cardname = family_str[family];
+			fprintf(stderr, _("Unknown Radeon card. <= R500 won't work, new cards might.\n"));
+		}
+	} else {
+		cardname = family_str[family];
+	}
 
 	initbits(family);
 
