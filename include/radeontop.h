@@ -141,22 +141,38 @@ enum radeon_family {
 	ALDEBARAN,
 	CYAN_SKILLFISH,
 	BEIGE_GOBY,
-	MENDOCINO,		// gfx1036
-	GFX1033,		// Steam Deck (Van Gogh custom)
-	GFX1034,		// Navi 24
-	NAVI31,			// gfx1100, Radeon RX 7900 XTX/XT
-	NAVI32,			// gfx1101, Radeon RX 7800 XT
-	NAVI33,			// gfx1102, Radeon RX 7600
-	RADEON_780M,	// gfx1103, Radeon 780M iGPU
-	STRIX_POINT,	// gfx1150, Ryzen AI Strix
+	// RDNA 2 (gfx10.x)
+	GFX1030,		// gfx1030, RX 6800/6900 XT, Pro W6800/V620
+	GFX1031,		// gfx1031, RX 6700/6750/6800M/6850M
+	GFX1032,		// gfx1032, RX 6600 series, Pro W6600
+	GFX1034,		// gfx1034, RX 6300/6400/6500 XT, Pro W6300/W6400
+	// RDNA 3 APUs (gfx1103-1151)
+	GFX1035,		// gfx1035, Radeon 660M/680M
+	MENDOCINO,		// gfx1036, Radeon Graphics 128SP
+	GFX1033,		// gfx1033, Steam Deck GPU
+	RADEON_780M,	// gfx1103, Radeon 740M/760M/780M/ROG Ally
+	STRIX_POINT,	// gfx1150, Ryzen AI Strix Point
 	STRIX_HALO,		// gfx1151, Ryzen AI Strix Halo
-	RADEON_890M,	// gfx1170, Radeon 890M iGPU
+	// RDNA 4 APUs (gfx117x)
+	RADEON_890M,	// gfx1170, Radeon 890M
 	GFX1171,		// gfx1171
 	GFX1172,		// gfx1172
+	// RDNA 4 dGPU (gfx12xx)
 	RADEON_9000,	// gfx1200, Radeon 9000 series
 	GFX1201,		// gfx1201
-	GFX1300,		// RDNA 5
-	GFX1310,		// RDNA 5
+	// RDNA 5 (gfx13xx)
+	GFX1300,		// gfx1300, RDNA 5
+	GFX1310,		// gfx1310, RDNA 5
+	// Instinct MI (gfx90x)
+	MI8,			// gfx803, Instinct MI8/MI6
+	MI25,			// gfx900, Instinct MI25
+	MI50,			// gfx906, Instinct MI50/MI60
+	MI100,			// gfx908, Instinct MI100
+	MI210,			// gfx90a, Instinct MI210/MI250/MI250X
+	MI300,			// gfx940, Instinct MI300/MI300X/MI325X
+	NAVI31,			// gfx1100, RX 7900 series
+	NAVI32,			// gfx1101, RX 7800/7700 series
+	NAVI33,			// gfx1102, RX 7600/7500 series
 };
 
 extern const char * const family_str[];

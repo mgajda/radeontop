@@ -81,20 +81,37 @@ const char * const family_str[] = {
 	str(ALDEBARAN),
 	str(CYAN_SKILLFISH),
 	str(BEIGE_GOBY),
-	str(MENDOCINO),
-	str(GFX1033),
+	// RDNA 2 (gfx10.x)
+	"Radeon RX 6800/6900 XT",
+	"Radeon RX 6700/6750/6800M/6850M",
+	"Radeon RX 6600",
 	"Radeon RX 6500/W6300 (Navi 24)",
-	"Radeon RX 7900 (NAVI31)",
-	"Radeon RX 7800/7700 (NAVI32)",
-	"Radeon RX 7600/7500 (NAVI33)",
-	"Radeon 780M",
+	// RDNA 3 APUs (gfx1103-1151)
+	"Radeon 660M/680M",
+	"Radeon Graphics 128SP",
+	"Steam Deck GPU",
+	"Radeon 740M/760M/780M",
 	"Ryzen AI (Strix Point)",
 	"Ryzen AI (Strix Halo)",
+	// RDNA 4 APUs (gfx117x)
 	"Radeon 890M",
 	str(GFX1171),
 	str(GFX1172),
+	// RDNA 4 dGPU (gfx12xx)
 	"Radeon 9000",
 	str(GFX1201),
+	// RDNA 5 (gfx13xx)
 	str(GFX1300),
 	str(GFX1310),
+	// Instinct MI (gfx90x)
+	"Instinct MI8/MI6",
+	"Instinct MI25",
+	"Instinct MI50/MI60",
+	"Instinct MI100",
+	"Instinct MI210/MI250/MI250X",
+	"Instinct MI300/MI300X/MI325X",
+	// RDNA 3 dGPU (gfx110x)
+	"Radeon RX 7900 (Flagship)",
+	"Radeon RX 7800/7700 (High-End)",
+	"Radeon RX 7600/7500 (Mainstream)",
 };
