@@ -142,19 +142,19 @@ enum radeon_family {
 	MENDOCINO,		// gfx1036
 	GFX1033,		// Steam Deck (Van Gogh custom)
 	GFX1034,		// Navi 24
-	NAVI31,			// gfx1100
-	NAVI32,			// gfx1101
-	NAVI33,			// gfx1102
-	GFX1103,		// Radeon 780M iGPU
-	GFX1150,		// Strix
-	GFX1151,		// Strix Halo
-	GFX1170,		// RDNA 4m
-	GFX1171,
-	GFX1172,
-	GFX1200,		// RDNA 4
-	GFX1201,
+	NAVI31,			// gfx1100, Radeon RX 7900 XTX/XT
+	NAVI32,			// gfx1101, Radeon RX 7800 XT
+	NAVI33,			// gfx1102, Radeon RX 7600
+	RADEON_780M,	// gfx1103, Radeon 780M iGPU
+	STRIX_POINT,	// gfx1150, Ryzen AI Strix
+	STRIX_HALO,		// gfx1151, Ryzen AI Strix Halo
+	RADEON_890M,	// gfx1170, Radeon 890M iGPU
+	GFX1171,		// gfx1171
+	GFX1172,		// gfx1172
+	RADEON_9000,	// gfx1200, Radeon 9000 series
+	GFX1201,		// gfx1201
 	GFX1300,		// RDNA 5
-	GFX1310,
+	GFX1310,		// RDNA 5
 };
 
 extern const char * const family_str[];
