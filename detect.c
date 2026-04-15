@@ -28,6 +28,7 @@ uint64_t gttsize;
 unsigned int sclk_max = 0; // kilohertz
 unsigned int mclk_max = 0; // kilohertz
 unsigned int is_apu = 0; // 1 if APU (unified memory), 0 if discrete GPU
+unsigned int has_power_sensor = 0; // 1 if power sensor available, 0 if unavailable
 const void *area;
 static const void *srbm_area;
 

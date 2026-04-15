@@ -311,12 +311,12 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			if (color) attroff(COLOR_PAIR(3));
 		}
 
-		if (temp_avg > 0 || power_avg > 0) {
+		if (temp_avg > 0 || power_avg > 0 || has_power_sensor) {
 			if (h > bigh) start++;
 			if (temp_avg > 0) {
 				printright(start++, hw, _("Temperature %6.1f°C"), temp_avg);
 			}
-			if (power_avg > 0) {
+			if (has_power_sensor) {
 				printright(start++, hw, _("Power Draw %6.1fW"), power_avg);
 			}
 		}
