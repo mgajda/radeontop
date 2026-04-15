@@ -150,13 +150,13 @@ enum radeon_family {
 	GFX1033,		// gfx1033, Steam Deck GPU
 	RADEON_780M,	// gfx1103, Radeon 740M/760M/780M/ROG Ally
 	STRIX_POINT,	// gfx1150, Radeon 890M (Strix Point)
-	STRIX_HALO,		// gfx1151, Radeon 8060S (Strix Halo)
+	RADEON_880M,	// gfx1151, Radeon 880M (Strix Halo)
 	// RDNA 4 APUs (gfx115x - Krackan)
 	KRACKAN_POINT,	// gfx1152, Radeon 820M/840M/860M (Krackan Point)
-	// RDNA 4 APUs (gfx117x, Medusa variants)
-	RADEON_880M,	// gfx1170, Radeon 880M
-	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
-	MEDUSA_HALO,	// gfx1172, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
+	// RDNA 4 APUs (gfx117x - Medusa)
+	MEDUSA_POINT,	// gfx1170, Medusa Point
+	MEDUSA_POINT_2,	// gfx1171, Medusa Point (variant mapping TBD)
+	MEDUSA_POINT_3,	// gfx1172, Medusa Point (variant mapping TBD)
 	// RDNA 4 dGPU (gfx12xx)
 	RADEON_9000,	// gfx1200, Radeon 9000 series
 	GFX1201,		// gfx1201
