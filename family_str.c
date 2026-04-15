@@ -111,7 +111,7 @@ const char * const family_str[] = {
 	"Instinct MI210/MI250/MI250X",
 	"Instinct MI300/MI300X/MI325X",
 	// RDNA 3 dGPU (gfx110x)
-	"Radeon RX 7900 (Flagship)",
-	"Radeon RX 7800/7700 (High-End)",
-	"Radeon RX 7600/7500 (Mainstream)",
+	"Radeon RX 7900",
+	"Radeon RX 7800/7700",
+	"Radeon RX 7600/7500",
 };
