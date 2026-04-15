@@ -99,6 +99,8 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 		float uvd = 100 * results->uvd * k;
 		float vce0 = 100 * results->vce0 * k;
 		float vcn = 100 * results->vcn * k;
+		float temp_avg = results->temperature ? (results->temperature / (ticks * dumpinterval)) / 1000.0f : 0;
+		float power_avg = results->power ? (results->power / (ticks * dumpinterval)) / 1000.0f : 0;
 		float vram = 100.0f * results->vram / vramsize;
 		float vrammb = results->vram / 1024.0f / 1024.0f;
 		float gtt = 100.0f * results->gtt / gttsize;
@@ -148,6 +150,11 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 		if (sclk_max != 0 && sclk > 0)
 			fprintf(f, ", mclk %.2f%% %.3fghz, sclk %.2f%% %.3fghz",
 					mclk, mclk_ghz, sclk, sclk_ghz);
+
+		if (temp_avg > 0)
+			fprintf(f, ", temp %.1fC", temp_avg);
+		if (power_avg > 0)
+			fprintf(f, ", power %.1fW", power_avg);
 
 		fprintf(f, "\n");
 		fflush(f);

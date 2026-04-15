@@ -69,6 +69,8 @@ static void *collector(void *arg) {
 		}
 		getsclk(&history[cur].sclk);
 		getmclk(&history[cur].mclk);
+		gettemp(&history[cur].temperature);
+		getpower(&history[cur].power);
 
 		usleep(sleeptime);
 		cur++;
@@ -100,6 +102,8 @@ static void *collector(void *arg) {
 				res[curres].vcn += history[i].vcn;
 				res[curres].mclk += history[i].mclk;
 				res[curres].sclk += history[i].sclk;
+				res[curres].temperature += history[i].temperature;
+				res[curres].power += history[i].power;
 			}
 
 			getvram(&res[curres].vram);

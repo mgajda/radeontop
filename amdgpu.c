@@ -56,6 +56,18 @@ static int getmclk_amdgpu(uint32_t *out) {
 	return amdgpu_query_sensor_info(amdgpu_dev, AMDGPU_INFO_SENSOR_GFX_MCLK,
 		sizeof(uint32_t), out);
 }
+
+static int gettemp_amdgpu(uint32_t *out) {
+	return amdgpu_query_sensor_info(amdgpu_dev, AMDGPU_INFO_SENSOR_GPU_TEMP,
+		sizeof(uint32_t), out);
+}
+#endif
+
+#ifdef HAS_AMDGPU_QUERY_SENSOR_INFO
+static int getpower_amdgpu(uint32_t *out) {
+	return amdgpu_query_sensor_info(amdgpu_dev, AMDGPU_INFO_SENSOR_GPU_AVG_POWER,
+		sizeof(uint32_t), out);
+}
 #endif
 
 #define DRM_ATLEAST_VERSION(maj, min) \
@@ -121,6 +133,16 @@ void init_amdgpu(int fd) {
 		else	// memory clock reporting not available on APUs
 			if (!(gpu.ids_flags & AMDGPU_IDS_FLAGS_FUSION))
 				drmError(ret, _("Failed to get memory clock"));
+
+		if (!(ret = gettemp_amdgpu(&out32)))
+			gettemp = gettemp_amdgpu;
+		else
+			drmError(ret, _("Failed to get GPU temperature"));
+
+		if (!(ret = getpower_amdgpu(&out32)))
+			getpower = getpower_amdgpu;
+		else
+			drmError(ret, _("Failed to get GPU power"));
 	} else
 		fprintf(stderr, _("Clock frenquency reporting is disabled (amdgpu kernel driver 3.11.0 required)\n"));
 #else
