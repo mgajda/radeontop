@@ -373,19 +373,19 @@ int getfamily_gfx(unsigned int ip_ver) {
 		case 1037: return MENDOCINO;
 		// RDNA 3 (GC 11.0.x) - IP rev != GFX code
 		case 1100: return NAVI31;	// IP 11.0.0 = gfx1100
-		case 1101: return GFX1103;	// IP 11.0.1 = gfx1103 (Phoenix1)
+		case 1101: return RADEON_780M;	// IP 11.0.1 = gfx1103 (Phoenix1)
 		case 1102: return NAVI33;	// IP 11.0.2 = gfx1102
 		case 1103: return NAVI32;	// IP 11.0.3 = gfx1101 (Navi 32)
-		case 1104: return GFX1103;	// IP 11.0.4 = gfx1103 (Phoenix2)
+		case 1104: return RADEON_780M;	// IP 11.0.4 = gfx1103 (Phoenix2)
 		// RDNA 3.5 (GC 11.5.x)
-		case 1150: return GFX1150;
-		case 1151: return GFX1151;
+		case 1150: return STRIX_POINT;
+		case 1151: return RADEON_880M;
 		// RDNA 4m (GC 11.7.x)
-		case 1170: return GFX1170;
-		case 1171: return GFX1171;
-		case 1172: return GFX1172;
+		case 1170: return MEDUSA_POINT;
+		case 1171: return MEDUSA_POINT_2;
+		case 1172: return MEDUSA_POINT_3;
 		// RDNA 4 (GC 12.0.x)
-		case 1200: return GFX1200;
+		case 1200: return RADEON_9000;
 		case 1201: return GFX1201;
 		// RDNA 5 (GC 13.x)
 		case 1300: return GFX1300;
@@ -398,10 +398,10 @@ int getfamily_gfx(unsigned int ip_ver) {
 		case 1010: return NAVI10;
 		case 1030: return SIENNA_CICHLID;
 		case 1100: return NAVI31;
-		case 1150: return GFX1150;
-		case 1170: return GFX1170;
-		case 1200: return GFX1200;
-		case 1210: return GFX1200;
+		case 1150: return STRIX_POINT;
+		case 1170: return MEDUSA_POINT;
+		case 1200: return RADEON_9000;
+		case 1210: return RADEON_9000;
 		case 1300: return GFX1300;
 		case 1310: return GFX1310;
 	}
