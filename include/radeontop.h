@@ -151,10 +151,10 @@ enum radeon_family {
 	RADEON_780M,	// gfx1103, Radeon 740M/760M/780M/ROG Ally
 	STRIX_POINT,	// gfx1150, Ryzen AI Strix Point
 	STRIX_HALO,		// gfx1151, Ryzen AI Strix Halo
-	// RDNA 4 APUs (gfx117x)
+	// RDNA 4 APUs (gfx117x, Medusa variants)
 	RADEON_890M,	// gfx1170, Radeon 890M
-	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa Point
-	MEDUSA_HALO,	// gfx1172, Ryzen AI Medusa Halo
+	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
+	MEDUSA_HALO,	// gfx1172, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
 	// RDNA 4 dGPU (gfx12xx)
 	RADEON_9000,	// gfx1200, Radeon 9000 series
 	GFX1201,		// gfx1201
