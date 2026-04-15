@@ -91,10 +91,10 @@ const char * const family_str[] = {
 	"Radeon Graphics 128SP (gfx1036)",
 	"Steam Deck GPU (gfx1033)",
 	"Radeon 740M/760M/780M (gfx1103)",
-	"Strix Point (Ryzen AI)",
-	"Radeon 8040S/8050S/8060S (Strix Halo)",
+	"Radeon 890M (Strix Point)",
+	"Radeon 8060S (Strix Halo)",
 	// RDNA 4 APUs (gfx117x, Medusa variants - mapping TBD)
-	"Radeon 880M/890M (Strix Point)",
+	"Radeon 880M (gfx1170)",
 	"Medusa (gfx1171)",
 	"Medusa (gfx1172)",
 	// RDNA 4 dGPU (gfx12xx)

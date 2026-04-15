@@ -151,10 +151,10 @@ enum radeon_family {
 	MENDOCINO,		// gfx1036, Radeon Graphics 128SP
 	GFX1033,		// gfx1033, Steam Deck GPU
 	RADEON_780M,	// gfx1103, Radeon 740M/760M/780M/ROG Ally
-	STRIX_POINT,	// gfx1150, Ryzen AI Strix Point
-	STRIX_HALO,		// gfx1151, Ryzen AI Strix Halo
+	STRIX_POINT,	// gfx1150, Radeon 890M (Strix Point)
+	STRIX_HALO,		// gfx1151, Radeon 8060S (Strix Halo)
 	// RDNA 4 APUs (gfx117x, Medusa variants)
-	RADEON_890M,	// gfx1170, Radeon 890M
+	RADEON_880M,	// gfx1170, Radeon 880M
 	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
 	MEDUSA_HALO,	// gfx1172, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
 	// RDNA 4 dGPU (gfx12xx)
