@@ -264,7 +264,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		}
 		if (bits.vcn) {
 			percentage(start, w, vcn);
-			printright(start++, hw, _("VCN %6.2f%%"), vcn);
+			printright(start++, hw, _("Video Core %6.2f%%"), vcn);
 		}
 
 		if (bits.vram || bits.gtt) {

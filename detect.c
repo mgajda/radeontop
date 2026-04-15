@@ -379,7 +379,7 @@ void initbits(int fam) {
 		}
 	}
 
-	// VCN (Video Core Next) on RDNA: bit 1 of SRBM_STATUS2
+	// Video Core (VCN) on RDNA: bit 1 of SRBM_STATUS2
 	if (fam >= NAVI10) {
 		bits.vcn = (1U << 1);
 	}
