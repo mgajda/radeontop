@@ -95,14 +95,14 @@ const char * const family_str[] = {
 	"Ryzen AI (Strix Halo)",
 	// RDNA 4 APUs (gfx117x, Medusa variants - mapping TBD)
 	"Radeon 890M",
-	"Ryzen AI Medusa",
-	"Ryzen AI Medusa",
+	"Ryzen AI Medusa (gfx1171)",
+	"Ryzen AI Medusa (gfx1172)",
 	// RDNA 4 dGPU (gfx12xx)
-	"Radeon 9000",
-	str(GFX1201),
+	"Radeon 9000 (gfx1200)",
+	"Radeon 9000 Series (gfx1201)",
 	// RDNA 5 (gfx13xx)
-	str(GFX1300),
-	str(GFX1310),
+	"Radeon (gfx1300)",
+	"Radeon (gfx1310)",
 	// Instinct MI (gfx90x)
 	"Instinct MI8/MI6",
 	"Instinct MI25",
