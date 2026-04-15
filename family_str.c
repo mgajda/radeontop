@@ -83,7 +83,7 @@ const char * const family_str[] = {
 	str(BEIGE_GOBY),
 	str(MENDOCINO),
 	str(GFX1033),
-	str(GFX1034),
+	"Radeon RX 6500/W6300 (Navi 24)",
 	"Radeon RX 7900 (NAVI31)",
 	"Radeon RX 7800/7700 (NAVI32)",
 	"Radeon RX 7600/7500 (NAVI33)",
