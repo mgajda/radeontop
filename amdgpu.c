@@ -142,8 +142,9 @@ void init_amdgpu(int fd) {
 
 		if (!(ret = getpower_amdgpu(&out32)))
 			getpower = getpower_amdgpu;
-		else
+		else if (!is_apu)
 			drmError(ret, _("Failed to get GPU power"));
+		// Power monitoring may not be available on APUs; silently skip
 	} else
 		fprintf(stderr, _("Clock frenquency reporting is disabled (amdgpu kernel driver 3.11.0 required)\n"));
 #else
