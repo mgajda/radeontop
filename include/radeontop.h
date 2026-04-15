@@ -154,7 +154,7 @@ enum radeon_family {
 	STRIX_POINT,	// gfx1150, Radeon 890M (Strix Point)
 	STRIX_HALO,		// gfx1151, Radeon 8060S (Strix Halo)
 	// RDNA 4 APUs (gfx115x - Kraken)
-	KRAKEN_POINT,	// gfx1152, Kraken Point
+	KRAKEN_POINT,	// gfx1152, Radeon 820M/840M/860M (Kraken Point)
 	// RDNA 4 APUs (gfx117x, Medusa variants)
 	RADEON_880M,	// gfx1170, Radeon 880M
 	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa (mapping TBD: Point/Halo/Mini)
