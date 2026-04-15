@@ -141,11 +141,19 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 		if (bits.vcn)
 			fprintf(f, ", vc %.2f%%", vcn);
 
-		if (bits.vram)
-			fprintf(f, ", vram %.2f%% %.2fmb", vram, vrammb);
+		if (bits.vram) {
+			if (is_apu)
+				fprintf(f, ", reserved %.2f%% %.2fmb", vram, vrammb);
+			else
+				fprintf(f, ", vram %.2f%% %.2fmb", vram, vrammb);
+		}
 
-		if (bits.gtt)
-			fprintf(f, ", gtt %.2f%% %.2fmb", gtt, gttmb);
+		if (bits.gtt) {
+			if (is_apu)
+				fprintf(f, ", unified %.2f%% %.2fmb", gtt, gttmb);
+			else
+				fprintf(f, ", gtt %.2f%% %.2fmb", gtt, gttmb);
+		}
 
 		if (sclk_max != 0 && sclk > 0)
 			fprintf(f, ", mclk %.2f%% %.3fghz, sclk %.2f%% %.3fghz",
