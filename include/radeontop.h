@@ -153,8 +153,8 @@ enum radeon_family {
 	STRIX_HALO,		// gfx1151, Ryzen AI Strix Halo
 	// RDNA 4 APUs (gfx117x)
 	RADEON_890M,	// gfx1170, Radeon 890M
-	GFX1171,		// gfx1171
-	GFX1172,		// gfx1172
+	MEDUSA_POINT,	// gfx1171, Ryzen AI Medusa Point
+	MEDUSA_HALO,	// gfx1172, Ryzen AI Medusa Halo
 	// RDNA 4 dGPU (gfx12xx)
 	RADEON_9000,	// gfx1200, Radeon 9000 series
 	GFX1201,		// gfx1201
