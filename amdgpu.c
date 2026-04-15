@@ -58,6 +58,8 @@ static int getmclk_amdgpu(uint32_t *out) {
 }
 
 static int gettemp_amdgpu(uint32_t *out) {
+	// For APUs, the GPU temperature sensor reports the shared die temperature
+	// which is more accurate since CPU and GPU cores share thermal management
 	return amdgpu_query_sensor_info(amdgpu_dev, AMDGPU_INFO_SENSOR_GPU_TEMP,
 		sizeof(uint32_t), out);
 }
@@ -137,8 +139,11 @@ void init_amdgpu(int fd) {
 
 		if (!(ret = gettemp_amdgpu(&out32)))
 			gettemp = gettemp_amdgpu;
-		else
-			drmError(ret, _("Failed to get GPU temperature"));
+		else {
+			// APUs may not have distinct GPU temperature sensor
+			if (!is_apu)
+				drmError(ret, _("Failed to get GPU temperature"));
+		}
 
 		if (!(ret = getpower_amdgpu(&out32))) {
 			getpower = getpower_amdgpu;
