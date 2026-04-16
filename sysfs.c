@@ -27,6 +27,7 @@
 
 #include "radeontop.h"
 #include <dirent.h>
+#include <fcntl.h>
 #include <time.h>
 
 unsigned int has_throttle_sensor = 0;
@@ -43,8 +44,10 @@ static char se0_path[320] = "";
 static char se1_path[320] = "";
 static char ras_path[320] = "";
 
-// Unexpected-reading log
-#define UNEXPECTED_LOG_PATH "/tmp/radeontop-unexpected.log"
+// Unexpected-reading log (path assigned via mkstemp on first use)
+#define UNEXPECTED_LOG_TEMPLATE "/tmp/radeontop-unexpected-XXXXXX.log"
+static char unexpected_log_path[sizeof(UNEXPECTED_LOG_TEMPLATE) + 1] = "";
+static FILE *unexpected_log_fp = NULL;
 static int unexpected_logged = 0;
 static unsigned int saved_device_id = 0;
 
@@ -111,25 +114,42 @@ static int find_ras_dir(char *out, size_t outsz) {
 
 void sysfs_report_unexpected(const char *reg, uint32_t value,
 		unsigned int device_id) {
-	// Log to a known file so the user can attach it to an upstream report.
-	// Only log once per register to avoid flooding.
-	FILE *f = fopen(UNEXPECTED_LOG_PATH, "a");
-	if (!f) return;
+	// Open the log file securely on first use. Using mkstemps() creates
+	// a fresh, uniquely-named file with mode 0600, avoiding symlink
+	// attacks and collisions between users on the same tmpfs.
+	if (unexpected_log_fp == NULL) {
+		strncpy(unexpected_log_path, UNEXPECTED_LOG_TEMPLATE,
+			sizeof(unexpected_log_path) - 1);
+		unexpected_log_path[sizeof(unexpected_log_path) - 1] = '\0';
 
-	if (!unexpected_logged) {
+		// Suffix length is 4 (".log"); mkstemps replaces the XXXXXX.
+		int fd = mkstemps(unexpected_log_path, 4);
+		if (fd < 0) return;
+
+		unexpected_log_fp = fdopen(fd, "w");
+		if (!unexpected_log_fp) {
+			close(fd);
+			unexpected_log_path[0] = '\0';
+			return;
+		}
+
 		time_t now = time(NULL);
-		fprintf(f, "# radeontop unexpected-register log\n");
-		fprintf(f, "# Started: %s", ctime(&now));
-		fprintf(f, "# PCI device ID: 0x%04x  gfx_version: %u  is_apu: %u\n",
+		fprintf(unexpected_log_fp, "# radeontop unexpected-register log\n");
+		fprintf(unexpected_log_fp, "# Started: %s", ctime(&now));
+		fprintf(unexpected_log_fp,
+			"# PCI device ID: 0x%04x  gfx_version: %u  is_apu: %u\n",
 			device_id, gfx_version, is_apu);
-		fprintf(f, "# These registers were read as non-zero on a GPU where the\n"
-			   "# documentation says they should read zero. Please report\n"
-			   "# this file to the radeontop upstream so the gate can be\n"
-			   "# refined: https://github.com/clbr/radeontop/issues\n");
+		fprintf(unexpected_log_fp,
+			"# These registers were read as non-zero on a GPU where the\n"
+			"# documentation says they should read zero. Please report\n"
+			"# this file to the radeontop upstream so the gate can be\n"
+			"# refined: https://github.com/clbr/radeontop/issues\n");
 	}
-	fprintf(f, "unexpected %s=0x%08x device=0x%04x gfx%u\n",
+
+	fprintf(unexpected_log_fp,
+		"unexpected %s=0x%08x device=0x%04x gfx%u\n",
 		reg, value, device_id, gfx_version);
-	fclose(f);
+	fflush(unexpected_log_fp);
 	unexpected_logged = 1;
 }
 
@@ -179,7 +199,11 @@ static void check_unexpected(const char *reg, uint32_t value) {
 }
 
 void sysfs_print_exit_notice(void) {
-	if (!unexpected_logged) return;
+	if (unexpected_log_fp) {
+		fclose(unexpected_log_fp);
+		unexpected_log_fp = NULL;
+	}
+	if (!unexpected_logged || unexpected_log_path[0] == '\0') return;
 	fprintf(stderr,
 		"\nradeontop: some hardware registers returned non-zero values\n"
 		"although they were documented as unsupported on this GPU.\n"
@@ -187,7 +211,7 @@ void sysfs_print_exit_notice(void) {
 		"Please consider sending it upstream so the family gating can\n"
 		"be improved: https://github.com/clbr/radeontop/issues\n"
 		"Include your graphics card model along with the log file.\n",
-		UNEXPECTED_LOG_PATH);
+		unexpected_log_path);
 }
 
 int get_throttle_sysfs(uint32_t *out) {
