@@ -33,6 +33,7 @@
 unsigned int has_throttle_sensor = 0;
 unsigned int has_se_sensors = 0;
 unsigned int has_ecc = 0;
+unsigned int has_vcn_busy_sysfs = 0;
 // Display gates: sampling always runs when has_*_sensor is set,
 // but display is suppressed on GPU families where the register is
 // documented as unsupported (reads as zero).
@@ -43,6 +44,7 @@ static char throttle_path[320] = "";
 static char se0_path[320] = "";
 static char se1_path[320] = "";
 static char ras_path[320] = "";
+static char vcn_busy_path[320] = "";
 
 // Unexpected-reading log (path assigned via mkstemp on first use)
 #define UNEXPECTED_LOG_TEMPLATE "/tmp/radeontop-unexpected-XXXXXX.log"
@@ -189,6 +191,21 @@ void init_sysfs_whitelist(unsigned int device_id) {
 	// ECC via standard upstream RAS sysfs
 	if (find_ras_dir(ras_path, sizeof(ras_path)) == 0)
 		has_ecc = 1;
+
+	// Upstream amdgpu VCN busy percent (replaces the SRBM_STATUS2 bit
+	// approach which is unreliable on RDNA since SRBM is deprecated).
+	const char *const vcn_busy_candidates[] = {
+		CARD_DEV "/vcn_busy_percent",
+		NULL
+	};
+	probe_card_path(vcn_busy_candidates, vcn_busy_path, sizeof(vcn_busy_path));
+	has_vcn_busy_sysfs = (vcn_busy_path[0] != '\0');
+}
+
+int get_vcn_busy_sysfs(uint32_t *out) {
+	if (vcn_busy_path[0] == '\0') { *out = 0; return -1; }
+	// File contains a decimal busy percentage (0..100)
+	return read_u32(vcn_busy_path, out);
 }
 
 // Check if an unexpected-to-be-zero sensor returned non-zero, and if so,

@@ -277,7 +277,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			percentage(start, w, vce0);
 			printright(start++, hw, _("VCE %6.2f%%"), vce0);
 		}
-		if (bits.vcn) {
+		if (bits.vcn || has_vcn_busy_sysfs) {
 			percentage(start, w, vcn);
 			printright(start++, hw, _("Video Core %6.2f%%"), vcn);
 		}

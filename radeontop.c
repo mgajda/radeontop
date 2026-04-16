@@ -163,6 +163,11 @@ int main(int argc, char **argv) {
 
 	initbits(family);
 
+	// Prefer the portable upstream vcn_busy_percent sysfs over the
+	// SRBM_STATUS2 bit, which is unreliable on RDNA (SRBM deprecated).
+	if (has_vcn_busy_sysfs)
+		bits.vcn = 0;
+
 	// runtime
 	collect(ticks, dumpinterval);
 

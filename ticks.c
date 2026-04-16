@@ -44,7 +44,11 @@ static void *collector(void *arg) {
 		unsigned int uvd;
 		if (bits.uvd) getsrbm(&uvd);
 		unsigned int srbm2;
-		if (bits.vce0 || bits.vcn) getsrbm2(&srbm2);
+		// Only read SRBM_STATUS2 if we actually have a register-based VCN
+		// source; on RDNA the upstream vcn_busy_percent sysfs supersedes
+		// the unreliable SRBM_STATUS2 bit (which returns all-ones on
+		// unwhitelisted reads and causes a spurious 100%).
+		if ((bits.vce0 || bits.vcn) && !has_vcn_busy_sysfs) getsrbm2(&srbm2);
 
 		memset(&history[cur], 0, sizeof(struct bits_t));
 
@@ -63,7 +67,15 @@ static void *collector(void *arg) {
 		if (stat & bits.cr) history[cur].cr = 1;
 		if (stat & bits.cb) history[cur].cb = 1;
 		if (uvd & bits.uvd) history[cur].uvd = 1;
-		if (bits.vce0 || bits.vcn) {
+		if (has_vcn_busy_sysfs) {
+			// Upstream amdgpu reports VCN busy as percentage 0..100.
+			// Treat any non-zero as "busy this sample" so the existing
+			// aggregation produces "% of samples VCN was active",
+			// consistent with the other bitfield metrics.
+			uint32_t pct = 0;
+			if (get_vcn_busy_sysfs(&pct) == 0 && pct > 0)
+				history[cur].vcn = 1;
+		} else if (bits.vce0 || bits.vcn) {
 			if (srbm2 & bits.vce0) history[cur].vce0 = 1;
 			if (srbm2 & bits.vcn) history[cur].vcn = 1;
 		}

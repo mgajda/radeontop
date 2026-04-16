@@ -228,6 +228,9 @@ void init_sysfs_whitelist(unsigned int device_id);
 void sysfs_report_unexpected(const char *reg, uint32_t value,
 		unsigned int device_id);
 void sysfs_print_exit_notice(void);
+int get_vcn_busy_sysfs(uint32_t *out);
+
+extern unsigned int has_vcn_busy_sysfs;
 int get_throttle_sysfs(uint32_t *out);
 int get_grbm_se0_sysfs(uint32_t *out);
 int get_grbm_se1_sysfs(uint32_t *out);

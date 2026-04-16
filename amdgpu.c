@@ -147,7 +147,10 @@ void init_amdgpu(int fd) {
 
 		if (!(ret = getpower_amdgpu(&out32))) {
 			getpower = getpower_amdgpu;
-			has_power_sensor = 1;
+			// On APUs the sensor "succeeds" but always returns 0 W,
+			// so don't advertise power monitoring as available.
+			if (!is_apu)
+				has_power_sensor = 1;
 		} else if (!is_apu) {
 			drmError(ret, _("Failed to get GPU power"));
 		}
