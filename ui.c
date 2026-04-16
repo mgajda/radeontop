@@ -333,7 +333,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			if (has_throttle_sensor) {
 				if (color && throttle_pct > 0) attron(COLOR_PAIR(2));
 				percentage(start, w, throttle_pct);
-				printright(start++, hw, _("Throttle Active %6.2f%%"), throttle_pct);
+				printright(start++, hw, _("Throttle %6.2f%%"), throttle_pct);
 				if (color && throttle_pct > 0) attroff(COLOR_PAIR(2));
 			}
 		}
