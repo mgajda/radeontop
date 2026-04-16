@@ -153,7 +153,9 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		float cb = 100 * results->cb * k;
 		float uvd = 100 * results->uvd * k;
 		float vce0 = 100 * results->vce0 * k;
-		float vcn = 100 * results->vcn * k;
+		float vcn = has_vcn_busy_sysfs
+			? (results->vcn_pct * k)	// mean of kernel-reported pct
+			: 100 * results->vcn * k;
 		float vram = 100.0f * results->vram / vramsize;
 		float vrammb = results->vram / 1024.0f / 1024.0f;
 		float vramsizemb = vramsize / 1024.0f / 1024.0f;

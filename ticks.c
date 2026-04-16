@@ -68,13 +68,13 @@ static void *collector(void *arg) {
 		if (stat & bits.cb) history[cur].cb = 1;
 		if (uvd & bits.uvd) history[cur].uvd = 1;
 		if (has_vcn_busy_sysfs) {
-			// Upstream amdgpu reports VCN busy as percentage 0..100.
-			// Treat any non-zero as "busy this sample" so the existing
-			// aggregation produces "% of samples VCN was active",
-			// consistent with the other bitfield metrics.
+			// Upstream amdgpu already reports an averaged VCN busy
+			// percentage. Store it directly in vcn_pct; the aggregation
+			// below picks up the most recent value so the displayed
+			// figure is always a true 0..100% reading from the kernel.
 			uint32_t pct = 0;
-			if (get_vcn_busy_sysfs(&pct) == 0 && pct > 0)
-				history[cur].vcn = 1;
+			if (get_vcn_busy_sysfs(&pct) == 0)
+				history[cur].vcn_pct = pct;
 		} else if (bits.vce0 || bits.vcn) {
 			if (srbm2 & bits.vce0) history[cur].vce0 = 1;
 			if (srbm2 & bits.vcn) history[cur].vcn = 1;
@@ -125,6 +125,7 @@ static void *collector(void *arg) {
 				res[curres].uvd += history[i].uvd;
 				res[curres].vce0 += history[i].vce0;
 				res[curres].vcn += history[i].vcn;
+				res[curres].vcn_pct += history[i].vcn_pct;
 				res[curres].mclk += history[i].mclk;
 				res[curres].sclk += history[i].sclk;
 				res[curres].temperature += history[i].temperature;

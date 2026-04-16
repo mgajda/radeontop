@@ -98,7 +98,9 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 		float cb = 100 * results->cb * k;
 		float uvd = 100 * results->uvd * k;
 		float vce0 = 100 * results->vce0 * k;
-		float vcn = 100 * results->vcn * k;
+		float vcn = has_vcn_busy_sysfs
+			? (results->vcn_pct * k)	// mean of kernel-reported pct
+			: 100 * results->vcn * k;
 		float temp_avg = results->temperature ? (results->temperature / (ticks * dumpinterval)) / 1000.0f : 0;
 		float power_avg = results->power ? (results->power / (ticks * dumpinterval)) / 1000.0f : 0;
 		float throttle_pct = 100 * results->throttle * k;

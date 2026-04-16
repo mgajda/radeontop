@@ -208,6 +208,7 @@ struct bits_t {
 	uint32_t se0;
 	uint32_t se1;
 	uint64_t ecc_errors;
+	uint32_t vcn_pct;	// instantaneous VCN busy % from upstream sysfs
 };
 
 extern struct bits_t bits;
