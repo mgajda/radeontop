@@ -219,7 +219,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		if (h > bigh) start++;
 
 		if (color) attron(COLOR_PAIR(4));
-		if (has_se_sensors) {
+		if (has_se_sensors && show_se) {
 			percentage(start, w, se0_pct);
 			printright(start++, hw, _("Shader Engine 0 %6.2f%%"), se0_pct);
 			percentage(start, w, se1_pct);
@@ -322,7 +322,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			if (color) attroff(COLOR_PAIR(3));
 		}
 
-		if (temp_avg > 0 || power_avg > 0 || has_power_sensor || has_throttle_sensor) {
+		if (temp_avg > 0 || power_avg > 0 || has_power_sensor || (has_throttle_sensor && show_throttle)) {
 			if (h > bigh) start++;
 			if (temp_avg > 0) {
 				printright(start++, hw, _("Temperature %6.1f°C"), temp_avg);
@@ -330,7 +330,7 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			if (has_power_sensor) {
 				printright(start++, hw, _("Power Draw %6.1fW"), power_avg);
 			}
-			if (has_throttle_sensor) {
+			if (has_throttle_sensor && show_throttle) {
 				if (color && throttle_pct > 0) attron(COLOR_PAIR(2));
 				percentage(start, w, throttle_pct);
 				printright(start++, hw, _("Throttle %6.2f%%"), throttle_pct);

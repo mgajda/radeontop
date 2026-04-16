@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
 
 	setuid(getuid());
 
-	init_sysfs_whitelist();
+	init_sysfs_whitelist(device_id);
 
 	int family = getfamily(device_id);
 	if (!family && gfx_version)
@@ -172,5 +172,6 @@ int main(int argc, char **argv) {
 		present(ticks, cardname, color,transparency, bus, dumpinterval);
 
 	cleanup();
+	sysfs_print_exit_notice();
 	return 0;
 }

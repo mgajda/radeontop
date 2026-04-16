@@ -27,15 +27,26 @@
 
 #include "radeontop.h"
 #include <dirent.h>
+#include <time.h>
 
 unsigned int has_throttle_sensor = 0;
 unsigned int has_se_sensors = 0;
 unsigned int has_ecc = 0;
+// Display gates: sampling always runs when has_*_sensor is set,
+// but display is suppressed on GPU families where the register is
+// documented as unsupported (reads as zero).
+unsigned int show_throttle = 0;
+unsigned int show_se = 0;
 
 static char throttle_path[320] = "";
 static char se0_path[320] = "";
 static char se1_path[320] = "";
 static char ras_path[320] = "";
+
+// Unexpected-reading log
+#define UNEXPECTED_LOG_PATH "/tmp/radeontop-unexpected.log"
+static int unexpected_logged = 0;
+static unsigned int saved_device_id = 0;
 
 // Candidate locations, tried in order. NULL-terminated.
 #define CARD_DEV "/sys/class/drm/card%d/device"
@@ -98,39 +109,85 @@ static int find_ras_dir(char *out, size_t outsz) {
 	return -1;
 }
 
-void init_sysfs_whitelist(void) {
-	// Throttle and per-SE registers (per REGISTERS.md) cover RDNA1-4 dGPUs.
-	// On APUs these registers exist but are routed through SMU firmware
-	// and read as zero, so we gate the display on !is_apu.
-	// ECC uses standard upstream RAS sysfs (itself feature-gated per GPU).
+void sysfs_report_unexpected(const char *reg, uint32_t value,
+		unsigned int device_id) {
+	// Log to a known file so the user can attach it to an upstream report.
+	// Only log once per register to avoid flooding.
+	FILE *f = fopen(UNEXPECTED_LOG_PATH, "a");
+	if (!f) return;
 
-	if (!is_apu) {
-		// Throttle-active sensor. Prefer card sysfs, fall back to helper module.
-		const char *const throttle_candidates[] = {
-			CARD_DEV "/gpu_throttle",			// hypothetical upstream path
-			WHITELIST "/throttle_active",		// helper module
+	if (!unexpected_logged) {
+		time_t now = time(NULL);
+		fprintf(f, "# radeontop unexpected-register log\n");
+		fprintf(f, "# Started: %s", ctime(&now));
+		fprintf(f, "# PCI device ID: 0x%04x  gfx_version: %u  is_apu: %u\n",
+			device_id, gfx_version, is_apu);
+		fprintf(f, "# These registers were read as non-zero on a GPU where the\n"
+			   "# documentation says they should read zero. Please report\n"
+			   "# this file to the radeontop upstream so the gate can be\n"
+			   "# refined: https://github.com/clbr/radeontop/issues\n");
+	}
+	fprintf(f, "unexpected %s=0x%08x device=0x%04x gfx%u\n",
+		reg, value, device_id, gfx_version);
+	fclose(f);
+	unexpected_logged = 1;
+}
+
+void init_sysfs_whitelist(unsigned int device_id) {
+	saved_device_id = device_id;
+
+	// Throttle-active sensor: probe regardless of APU status. Sampling
+	// always runs when the path exists; display is gated by show_throttle
+	// which is only set for discrete GPUs per REGISTERS.md documentation.
+	const char *const throttle_candidates[] = {
+		CARD_DEV "/gpu_throttle",			// hypothetical upstream path
+		WHITELIST "/throttle_active",		// helper module
+		NULL
+	};
+	if (probe_card_path(throttle_candidates, throttle_path, sizeof(throttle_path)) != 0) {
+		const char *const fixed[] = {
+			WHITELIST "/throttle_active",
 			NULL
 		};
-		if (probe_card_path(throttle_candidates, throttle_path, sizeof(throttle_path)) != 0) {
-			const char *const fixed[] = {
-				WHITELIST "/throttle_active",
-				NULL
-			};
-			probe_fixed_path(fixed, throttle_path, sizeof(throttle_path));
-		}
-		has_throttle_sensor = (throttle_path[0] != '\0');
-
-		// Per-shader-engine load (dGPU only; APU SE registers read zero)
-		const char *const se0_fixed[] = { WHITELIST "/grbm_status_se0", NULL };
-		const char *const se1_fixed[] = { WHITELIST "/grbm_status_se1", NULL };
-		probe_fixed_path(se0_fixed, se0_path, sizeof(se0_path));
-		probe_fixed_path(se1_fixed, se1_path, sizeof(se1_path));
-		has_se_sensors = (se0_path[0] != '\0');
+		probe_fixed_path(fixed, throttle_path, sizeof(throttle_path));
 	}
+	has_throttle_sensor = (throttle_path[0] != '\0');
 
-	// ECC support via standard upstream RAS sysfs (works on all GPUs with RAS)
+	// Per-shader-engine load
+	const char *const se0_fixed[] = { WHITELIST "/grbm_status_se0", NULL };
+	const char *const se1_fixed[] = { WHITELIST "/grbm_status_se1", NULL };
+	probe_fixed_path(se0_fixed, se0_path, sizeof(se0_path));
+	probe_fixed_path(se1_fixed, se1_path, sizeof(se1_path));
+	has_se_sensors = (se0_path[0] != '\0');
+
+	// Display gates: per REGISTERS.md these registers cover RDNA1-4 dGPUs.
+	// On APUs they typically read zero; hide the UI row but keep sampling
+	// so we can log any unexpected non-zero reading.
+	show_throttle = !is_apu;
+	show_se = !is_apu;
+
+	// ECC via standard upstream RAS sysfs
 	if (find_ras_dir(ras_path, sizeof(ras_path)) == 0)
 		has_ecc = 1;
+}
+
+// Check if an unexpected-to-be-zero sensor returned non-zero, and if so,
+// log it once. Called from the sampling paths on APUs (!show_*).
+static void check_unexpected(const char *reg, uint32_t value) {
+	if (value != 0)
+		sysfs_report_unexpected(reg, value, saved_device_id);
+}
+
+void sysfs_print_exit_notice(void) {
+	if (!unexpected_logged) return;
+	fprintf(stderr,
+		"\nradeontop: some hardware registers returned non-zero values\n"
+		"although they were documented as unsupported on this GPU.\n"
+		"A log was written to: %s\n"
+		"Please consider sending it upstream so the family gating can\n"
+		"be improved: https://github.com/clbr/radeontop/issues\n"
+		"Include your graphics card model along with the log file.\n",
+		UNEXPECTED_LOG_PATH);
 }
 
 int get_throttle_sysfs(uint32_t *out) {
@@ -145,17 +202,25 @@ int get_throttle_sysfs(uint32_t *out) {
 	}
 	// throttle_active is a boolean; throttle_register has bit 20 as active.
 	*out = (v & (1U << 20)) ? 1 : (v ? 1 : 0);
+	// If we don't display this sensor but it returned non-zero, log it so
+	// the user can send an upstream report to refine the family gating.
+	if (!show_throttle)
+		check_unexpected("throttle", v);
 	return 0;
 }
 
 int get_grbm_se0_sysfs(uint32_t *out) {
 	if (se0_path[0] == '\0') { *out = 0; return -1; }
-	return read_u32(se0_path, out);
+	int r = read_u32(se0_path, out);
+	if (r == 0 && !show_se) check_unexpected("grbm_status_se0", *out);
+	return r;
 }
 
 int get_grbm_se1_sysfs(uint32_t *out) {
 	if (se1_path[0] == '\0') { *out = 0; return -1; }
-	return read_u32(se1_path, out);
+	int r = read_u32(se1_path, out);
+	if (r == 0 && !show_se) check_unexpected("grbm_status_se1", *out);
+	return r;
 }
 
 int get_ecc_errors_sysfs(uint64_t *out) {

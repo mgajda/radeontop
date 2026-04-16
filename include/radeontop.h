@@ -220,9 +220,14 @@ extern unsigned int has_power_sensor;
 extern unsigned int has_throttle_sensor;
 extern unsigned int has_se_sensors;
 extern unsigned int has_ecc;
+extern unsigned int show_throttle;
+extern unsigned int show_se;
 
 // sysfs.c
-void init_sysfs_whitelist(void);
+void init_sysfs_whitelist(unsigned int device_id);
+void sysfs_report_unexpected(const char *reg, uint32_t value,
+		unsigned int device_id);
+void sysfs_print_exit_notice(void);
 int get_throttle_sysfs(uint32_t *out);
 int get_grbm_se0_sysfs(uint32_t *out);
 int get_grbm_se1_sysfs(uint32_t *out);

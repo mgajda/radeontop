@@ -167,9 +167,9 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 			fprintf(f, ", temp %.1fC", temp_avg);
 		if (has_power_sensor)
 			fprintf(f, ", power %.1fW", power_avg);
-		if (has_throttle_sensor)
+		if (has_throttle_sensor && show_throttle)
 			fprintf(f, ", throttle %.2f%%", throttle_pct);
-		if (has_se_sensors)
+		if (has_se_sensors && show_se)
 			fprintf(f, ", se0 %.2f%%, se1 %.2f%%", se0_pct, se1_pct);
 		if (has_ecc)
 			fprintf(f, ", ecc_ue %lu", (unsigned long) ecc_errors);
