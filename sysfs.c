@@ -99,30 +99,36 @@ static int find_ras_dir(char *out, size_t outsz) {
 }
 
 void init_sysfs_whitelist(void) {
-	// Throttle-active sensor. Prefer card sysfs, fall back to helper module.
-	const char *const throttle_candidates[] = {
-		CARD_DEV "/gpu_throttle",			// hypothetical upstream path
-		WHITELIST "/throttle_active",		// helper module
-		NULL
-	};
-	if (probe_card_path(throttle_candidates, throttle_path, sizeof(throttle_path)) != 0) {
-		// Second pass for fixed (non-card) paths
-		const char *const fixed[] = {
-			WHITELIST "/throttle_active",
+	// Throttle and per-SE registers (per REGISTERS.md) cover RDNA1-4 dGPUs.
+	// On APUs these registers exist but are routed through SMU firmware
+	// and read as zero, so we gate the display on !is_apu.
+	// ECC uses standard upstream RAS sysfs (itself feature-gated per GPU).
+
+	if (!is_apu) {
+		// Throttle-active sensor. Prefer card sysfs, fall back to helper module.
+		const char *const throttle_candidates[] = {
+			CARD_DEV "/gpu_throttle",			// hypothetical upstream path
+			WHITELIST "/throttle_active",		// helper module
 			NULL
 		};
-		probe_fixed_path(fixed, throttle_path, sizeof(throttle_path));
+		if (probe_card_path(throttle_candidates, throttle_path, sizeof(throttle_path)) != 0) {
+			const char *const fixed[] = {
+				WHITELIST "/throttle_active",
+				NULL
+			};
+			probe_fixed_path(fixed, throttle_path, sizeof(throttle_path));
+		}
+		has_throttle_sensor = (throttle_path[0] != '\0');
+
+		// Per-shader-engine load (dGPU only; APU SE registers read zero)
+		const char *const se0_fixed[] = { WHITELIST "/grbm_status_se0", NULL };
+		const char *const se1_fixed[] = { WHITELIST "/grbm_status_se1", NULL };
+		probe_fixed_path(se0_fixed, se0_path, sizeof(se0_path));
+		probe_fixed_path(se1_fixed, se1_path, sizeof(se1_path));
+		has_se_sensors = (se0_path[0] != '\0');
 	}
-	has_throttle_sensor = (throttle_path[0] != '\0');
 
-	// Per-shader-engine load
-	const char *const se0_fixed[] = { WHITELIST "/grbm_status_se0", NULL };
-	const char *const se1_fixed[] = { WHITELIST "/grbm_status_se1", NULL };
-	probe_fixed_path(se0_fixed, se0_path, sizeof(se0_path));
-	probe_fixed_path(se1_fixed, se1_path, sizeof(se1_path));
-	has_se_sensors = (se0_path[0] != '\0');
-
-	// ECC support via standard upstream RAS sysfs
+	// ECC support via standard upstream RAS sysfs (works on all GPUs with RAS)
 	if (find_ras_dir(ras_path, sizeof(ras_path)) == 0)
 		has_ecc = 1;
 }
