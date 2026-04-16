@@ -72,6 +72,19 @@ static void *collector(void *arg) {
 		gettemp(&history[cur].temperature);
 		getpower(&history[cur].power);
 
+		if (has_throttle_sensor) {
+			uint32_t throttle = 0;
+			get_throttle_sysfs(&throttle);
+			history[cur].throttle = throttle;
+		}
+		if (has_se_sensors) {
+			uint32_t se0_stat = 0, se1_stat = 0;
+			get_grbm_se0_sysfs(&se0_stat);
+			get_grbm_se1_sysfs(&se1_stat);
+			history[cur].se0 = (se0_stat & bits.gui) ? 1 : 0;
+			history[cur].se1 = (se1_stat & bits.gui) ? 1 : 0;
+		}
+
 		usleep(sleeptime);
 		cur++;
 		cur %= ticks * dumpinterval;
@@ -104,10 +117,16 @@ static void *collector(void *arg) {
 				res[curres].sclk += history[i].sclk;
 				res[curres].temperature += history[i].temperature;
 				res[curres].power += history[i].power;
+				res[curres].throttle += history[i].throttle;
+				res[curres].se0 += history[i].se0;
+				res[curres].se1 += history[i].se1;
 			}
 
 			getvram(&res[curres].vram);
 			getgtt(&res[curres].gtt);
+
+			if (has_ecc)
+				get_ecc_errors_sysfs(&res[curres].ecc_errors);
 
 			// Atomically write it to the pointer
 			__sync_bool_compare_and_swap(&results, results, &res[curres]);

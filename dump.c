@@ -101,6 +101,10 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 		float vcn = 100 * results->vcn * k;
 		float temp_avg = results->temperature ? (results->temperature / (ticks * dumpinterval)) / 1000.0f : 0;
 		float power_avg = results->power ? (results->power / (ticks * dumpinterval)) / 1000.0f : 0;
+		float throttle_pct = 100 * results->throttle * k;
+		float se0_pct = 100 * results->se0 * k;
+		float se1_pct = 100 * results->se1 * k;
+		uint64_t ecc_errors = results->ecc_errors;
 		float vram = 100.0f * results->vram / vramsize;
 		float vrammb = results->vram / 1024.0f / 1024.0f;
 		float gtt = 100.0f * results->gtt / gttsize;
@@ -163,6 +167,12 @@ void dumpdata(const unsigned int ticks, const char file[], const unsigned int li
 			fprintf(f, ", temp %.1fC", temp_avg);
 		if (has_power_sensor)
 			fprintf(f, ", power %.1fW", power_avg);
+		if (has_throttle_sensor)
+			fprintf(f, ", throttle %.2f%%", throttle_pct);
+		if (has_se_sensors)
+			fprintf(f, ", se0 %.2f%%, se1 %.2f%%", se0_pct, se1_pct);
+		if (has_ecc)
+			fprintf(f, ", ecc_ue %lu", (unsigned long) ecc_errors);
 
 		fprintf(f, "\n");
 		fflush(f);

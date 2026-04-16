@@ -204,6 +204,10 @@ struct bits_t {
 	unsigned int mclk;
 	uint32_t temperature;
 	uint32_t power;
+	uint32_t throttle;
+	uint32_t se0;
+	uint32_t se1;
+	uint64_t ecc_errors;
 };
 
 extern struct bits_t bits;
@@ -213,6 +217,16 @@ extern unsigned int sclk_max;
 extern unsigned int mclk_max;
 extern unsigned int is_apu;
 extern unsigned int has_power_sensor;
+extern unsigned int has_throttle_sensor;
+extern unsigned int has_se_sensors;
+extern unsigned int has_ecc;
+
+// sysfs.c
+void init_sysfs_whitelist(void);
+int get_throttle_sysfs(uint32_t *out);
+int get_grbm_se0_sysfs(uint32_t *out);
+int get_grbm_se1_sysfs(uint32_t *out);
+int get_ecc_errors_sysfs(uint64_t *out);
 
 // radeon.c
 void init_radeon(int fd, int drm_major, int drm_minor);

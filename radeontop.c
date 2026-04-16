@@ -139,6 +139,8 @@ int main(int argc, char **argv) {
 
 	setuid(getuid());
 
+	init_sysfs_whitelist();
+
 	int family = getfamily(device_id);
 	if (!family && gfx_version)
 		family = getfamily_gfx(gfx_version);

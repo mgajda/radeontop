@@ -168,6 +168,11 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 		float temp_avg = results->temperature ? (results->temperature / (ticks * dumpinterval)) / 1000.0f : 0;
 		// Power in milliwatts, convert to display
 		float power_avg = results->power ? (results->power / (ticks * dumpinterval)) / 1000.0f : 0;
+		// Throttle: percent of samples where throttling was active
+		float throttle_pct = 100.0f * results->throttle * k;
+		float se0_pct = 100.0f * results->se0 * k;
+		float se1_pct = 100.0f * results->se1 * k;
+		uint64_t ecc_errors = results->ecc_errors;
 
 		mvhline(3, 0, ACS_HLINE, w);
 		mvvline(1, (w/2) + 1, ACS_VLINE, h);
@@ -318,6 +323,28 @@ void present(const unsigned int ticks, const char card[], unsigned int color,
 			}
 			if (has_power_sensor) {
 				printright(start++, hw, _("Power Draw %6.1fW"), power_avg);
+			}
+		}
+
+		if (has_throttle_sensor || has_se_sensors || has_ecc) {
+			if (h > bigh) start++;
+			if (has_throttle_sensor) {
+				if (color && throttle_pct > 0) attron(COLOR_PAIR(2));
+				percentage(start, w, throttle_pct);
+				printright(start++, hw, _("Throttle Active %6.2f%%"), throttle_pct);
+				if (color && throttle_pct > 0) attroff(COLOR_PAIR(2));
+			}
+			if (has_se_sensors) {
+				percentage(start, w, se0_pct);
+				printright(start++, hw, _("Shader Engine 0 %6.2f%%"), se0_pct);
+				percentage(start, w, se1_pct);
+				printright(start++, hw, _("Shader Engine 1 %6.2f%%"), se1_pct);
+			}
+			if (has_ecc) {
+				if (color && ecc_errors > 0) attron(COLOR_PAIR(2));
+				printright(start++, hw, _("ECC Uncorrectable Errors %lu"),
+						(unsigned long) ecc_errors);
+				if (color && ecc_errors > 0) attroff(COLOR_PAIR(2));
 			}
 		}
 
